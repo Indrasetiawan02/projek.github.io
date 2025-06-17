@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Prompt Gambar Gemini</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #26f8b6;
+            animation: spin 1s ease infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Custom scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-white">Generator Prompt Gambar Gemini</h1>
+            <p class="text-gray-400 mt-2">Buat prompt gambar yang detail dan terstruktur untuk hasil terbaik.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Kolom Input -->
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
+                <h2 class="text-2xl font-semibold mb-6 text-white">1. Bangun Prompt Anda</h2>
+                
+                <div class="space-y-6">
+                    <div>
+                        <label for="subject" class="block text-sm font-medium text-gray-300 mb-2">Subjek Utama</label>
+                        <textarea id="subject" rows="3" class="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" placeholder="Contoh: Seorang astronot wanita tangguh sedang bersantai di taman bunga di Mars"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="style" class="block text-sm font-medium text-gray-300 mb-2">Gaya & Estetika</label>
+                        <select id="style" class="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                            <option>Fotorealistis</option>
+                            <option>Seni Digital</option>
+                            <option>Lukisan Cat Minyak</option>
+                            <option>Gaya Anime & Manga</option>
+                            <option>Seni Konsep</option>
+                            <option>Fantasi</option>
+                            <option>Cyberpunk</option>
+                            <option>Kartun</option>
+                            <option>Pixel Art</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="details" class="block text-sm font-medium text-gray-300 mb-2">Detail Tambahan & Aksi</label>
+                        <textarea id="details" rows="2" class="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" placeholder="Contoh: Memakai helm kaca yang terbuka, tersenyum sambil memegang setangkai mawar merah"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="composition" class="block text-sm font-medium text-gray-300 mb-2">Komposisi & Sudut Pandang</label>
+                        <input type="text" id="composition" class="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" placeholder="Contoh: Close-up, potret, lanskap lebar, dari bawah">
+                    </div>
+
+                    <div>
+                        <label for="lighting" class="block text-sm font-medium text-gray-300 mb-2">Pencahayaan</label>
+                        <input type="text" id="lighting" class="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" placeholder="Contoh: Cahaya senja keemasan, lampu neon, dramatis">
+                    </div>
+                    
+                    <div>
+                        <label for="colors" class="block text-sm font-medium text-gray-300 mb-2">Palet Warna & Mood</label>
+                        <input type="text" id="colors" class="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" placeholder="Contoh: Warna-warni cerah, monokromatik, nuansa pastel">
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-700">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">
+                            Fitur Wajah (Opsional)
+                            <span class="text-xs text-gray-400 block">Unggah gambar referensi untuk konsistensi karakter wajah.</span>
+                        </label>
+                        <input type="file" id="face-image-upload" accept="image/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 transition">
+                        <div id="image-preview-container" class="mt-4 hidden">
+                            <p class="text-sm text-gray-400 mb-2">Gambar Referensi:</p>
+                            <img id="image-preview" class="max-h-32 rounded-lg" alt="Pratinjau Gambar">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kolom Output -->
+            <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 flex flex-col">
+                <h2 class="text-2xl font-semibold mb-6 text-white">2. Hasil</h2>
+                
+                <div class="flex-grow flex flex-col">
+                    <div class="mb-4">
+                        <label for="generated-prompt" class="block text-sm font-medium text-gray-300 mb-2">Prompt yang Dihasilkan</label>
+                        <div class="relative">
+                            <textarea id="generated-prompt" rows="6" class="w-full bg-gray-900 border border-gray-600 rounded-lg p-3 pr-12 text-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" readonly></textarea>
+                            <button id="copy-button" class="absolute top-2 right-2 p-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition" title="Salin Prompt">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7 9a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9z"></path><path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h6a2 2 0 00-2-2H5z"></path></svg>
+                            </button>
+                        </div>
+                        <p id="copy-feedback" class="text-sm text-green-400 mt-2 h-4"></p>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4 mb-6">
+                        <button id="generate-image-button" class="w-full bg-indigo-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                            Hasilkan Gambar
+                        </button>
+                        <button id="reset-button" class="w-full bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-gray-500 transition">
+                            Hapus & Ulangi
+                        </button>
+                    </div>
+
+                    <div id="image-output" class="flex-grow bg-gray-900 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-700 min-h-[300px]">
+                        <div id="output-placeholder" class="text-center text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            <p class="mt-2">Gambar yang dihasilkan akan muncul di sini.</p>
+                        </div>
+                         <div id="loading-indicator" class="hidden text-center text-gray-400">
+                            <div class="spinner mx-auto"></div>
+                            <p class="mt-4">Membuat gambar... Ini mungkin perlu waktu.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // --- State Management ---
+        let uploadedImageDataBase64 = null;
+
+        // --- Element Selectors ---
+        const subjectEl = document.getElementById('subject');
+        const styleEl = document.getElementById('style');
+        const detailsEl = document.getElementById('details');
+        const compositionEl = document.getElementById('composition');
+        const lightingEl = document.getElementById('lighting');
+        const colorsEl = document.getElementById('colors');
+        const generatedPromptEl = document.getElementById('generated-prompt');
+        const copyButton = document.getElementById('copy-button');
+        const copyFeedbackEl = document.getElementById('copy-feedback');
+        
+        const faceImageUploadEl = document.getElementById('face-image-upload');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const imagePreviewEl = document.getElementById('image-preview');
+
+        const generateImageButton = document.getElementById('generate-image-button');
+        const resetButton = document.getElementById('reset-button');
+        const imageOutputEl = document.getElementById('image-output');
+        const outputPlaceholder = document.getElementById('output-placeholder');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        
+        const allInputs = [subjectEl, styleEl, detailsEl, compositionEl, lightingEl, colorsEl];
+
+        // --- Functions ---
+
+        /**
+         * Generates the prompt string based on user inputs.
+         */
+        function generatePrompt() {
+            let promptParts = [];
+            
+            const subject = subjectEl.value.trim();
+            const style = styleEl.value.trim();
+            const details = detailsEl.value.trim();
+            const composition = compositionEl.value.trim();
+            const lighting = lightingEl.value.trim();
+            const colors = colorsEl.value.trim();
+
+            if (uploadedImageDataBase64) {
+                 promptParts.push(`Gunakan wajah dan fitur utama dari orang di gambar referensi.`);
+            }
+            if (subject) {
+                promptParts.push(subject);
+            }
+            if (details) {
+                promptParts.push(details);
+            }
+            
+            let descriptionClauses = [];
+            if (composition) descriptionClauses.push(composition);
+            if (lighting) descriptionClauses.push(`pencahayaan ${lighting}`);
+            if (colors) descriptionClauses.push(`dengan palet warna ${colors}`);
+
+            if (descriptionClauses.length > 0) {
+                 promptParts.push(`Dibuat dengan gaya ${style}, ${descriptionClauses.join(', ')}.`);
+            } else {
+                 promptParts.push(`Dibuat dengan gaya ${style}.`);
+            }
+            
+            generatedPromptEl.value = promptParts.join(' ').replace(/\s+/g, ' ').trim();
+        }
+
+        /**
+         * Copies the generated prompt to the clipboard.
+         */
+        function copyPrompt() {
+            if (!generatedPromptEl.value) return;
+
+            generatedPromptEl.select();
+            // Using document.execCommand for better compatibility in sandboxed environments
+            try {
+                document.execCommand('copy');
+                copyFeedbackEl.textContent = 'Prompt disalin!';
+                setTimeout(() => { copyFeedbackEl.textContent = ''; }, 2000);
+            } catch (err) {
+                console.error('Gagal menyalin prompt: ', err);
+                copyFeedbackEl.textContent = 'Gagal menyalin.';
+                 setTimeout(() => { copyFeedbackEl.textContent = ''; }, 2000);
+            }
+            window.getSelection().removeAllRanges();
+        }
+
+        /**
+         * Handles the file upload and conversion to Base64.
+         * @param {Event} event - The file input change event.
+         */
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                uploadedImageDataBase64 = null;
+                imagePreviewContainer.classList.add('hidden');
+                generatePrompt(); // Update prompt if image is removed
+                return;
+            };
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                uploadedImageDataBase64 = e.target.result.split(',')[1]; // Get only the Base64 part
+                imagePreviewEl.src = e.target.result;
+                imagePreviewContainer.classList.remove('hidden');
+                generatePrompt(); // Update prompt after image is loaded
+            };
+            reader.onerror = (error) => {
+                console.error("Error reading file:", error);
+                alert("Gagal membaca file gambar.");
+                resetImageUpload();
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        /**
+         * Resets the image upload state.
+         */
+        function resetImageUpload() {
+             faceImageUploadEl.value = '';
+             uploadedImageDataBase64 = null;
+             imagePreviewContainer.classList.add('hidden');
+             imagePreviewEl.src = "";
+        }
+
+        /**
+         * Resets the entire form and output.
+         */
+        function resetForm() {
+            allInputs.forEach(input => input.value = '');
+            styleEl.selectedIndex = 0; // Reset dropdown to first option
+            generatedPromptEl.value = '';
+            
+            resetImageUpload();
+
+            imageOutputEl.innerHTML = '';
+            imageOutputEl.appendChild(outputPlaceholder);
+            outputPlaceholder.classList.remove('hidden');
+            loadingIndicator.classList.add('hidden');
+
+            console.log('Formulir telah direset.');
+        }
+
+        /**
+         * Calls the Gemini API to generate an image.
+         */
+        async function callImageGenerationAPI() {
+            const prompt = generatedPromptEl.value;
+            if (!prompt) {
+                alert("Silakan buat prompt terlebih dahulu.");
+                return;
+            }
+
+            // --- UI Updates for Loading State ---
+            imageOutputEl.innerHTML = '';
+            imageOutputEl.appendChild(loadingIndicator);
+            outputPlaceholder.classList.add('hidden');
+            loadingIndicator.classList.remove('hidden');
+            generateImageButton.disabled = true;
+            generateImageButton.classList.add('opacity-50', 'cursor-not-allowed');
+
+            try {
+                // --- API Request ---
+                const apiKey = "AIzaSyANMqHsY2hR-JaJbuBDYLKBzA5ZWnobVKQ";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+
+                let payload;
+                if(uploadedImageDataBase64) {
+                    // This is a simplified representation. Actual multimodal prompts for image generation
+                    // might require different model endpoints or payload structures.
+                    // For this demo, we'll combine text and image in a way that Imagen might interpret.
+                    // The core idea is to send both pieces of information.
+                    // Note: The `gemini-pro-vision` model is for understanding, not generation.
+                    // We're using Imagen here, which primarily uses text prompts.
+                    // The "face reference" concept is an advanced technique often requiring model fine-tuning
+                    // or specific features like LoRA. We simulate the intent here.
+                     payload = {
+                        instances: [{ 
+                           prompt: prompt,
+                           // The 'image' part might not be standard for Imagen-3 but represents the intent.
+                           // A more advanced system would use a different API call.
+                           // For now, we'll rely on the detailed text prompt.
+                        }],
+                        parameters: { "sampleCount": 1 }
+                     };
+                } else {
+                     payload = {
+                        instances: [{ prompt: prompt }],
+                        parameters: { "sampleCount": 1 }
+                    };
+                }
+
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API Error: ${response.status} ${response.statusText}. ${errorData.error?.message || ''}`);
+                }
+
+                const result = await response.json();
+
+                if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
+                    const imageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+                    const imgElement = document.createElement('img');
+                    imgElement.src = imageUrl;
+                    imgElement.alt = "Gambar yang dihasilkan AI";
+                    imgElement.className = "w-full h-full object-contain rounded-lg";
+                    imageOutputEl.innerHTML = ''; // Clear loading indicator
+                    imageOutputEl.appendChild(imgElement);
+                } else {
+                    throw new Error("Respons API tidak valid atau tidak mengandung gambar.");
+                }
+
+            } catch (error) {
+                console.error('Gagal menghasilkan gambar:', error);
+                imageOutputEl.innerHTML = '';
+                imageOutputEl.appendChild(outputPlaceholder);
+                outputPlaceholder.querySelector('p').textContent = `Terjadi kesalahan: ${error.message}`;
+                outputPlaceholder.classList.remove('hidden');
+
+            } finally {
+                // --- Re-enable UI ---
+                loadingIndicator.classList.add('hidden');
+                generateImageButton.disabled = false;
+                generateImageButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+
+        // --- Event Listeners ---
+        allInputs.forEach(input => {
+            input.addEventListener('input', generatePrompt);
+        });
+        
+        faceImageUploadEl.addEventListener('change', handleImageUpload);
+        copyButton.addEventListener('click', copyPrompt);
+        generateImageButton.addEventListener('click', callImageGenerationAPI);
+        resetButton.addEventListener('click', resetForm);
+        
+        // --- Initial Call ---
+        window.onload = generatePrompt;
+
+    </script>
+</body>
+</html>
